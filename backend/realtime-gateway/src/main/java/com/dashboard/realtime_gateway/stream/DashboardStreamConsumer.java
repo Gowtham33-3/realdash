@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.connection.stream.StreamRecords;
+
+import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -30,6 +33,15 @@ public class DashboardStreamConsumer {
 
     private void createGroupIfAbsent() {
         try {
+            // ensure the stream key exists before creating the group
+            Boolean exists = redisTemplate.hasKey(StreamConstants.DASHBOARD_STREAM);
+            if (Boolean.FALSE.equals(exists)) {
+                redisTemplate.opsForStream().add(
+                        StreamRecords.mapBacked(Map.of("init", "true"))
+                                .withStreamKey(StreamConstants.DASHBOARD_STREAM)
+                );
+                log.debug("Created stream key '{}'", StreamConstants.DASHBOARD_STREAM);
+            }
             redisTemplate.opsForStream().createGroup(
                     StreamConstants.DASHBOARD_STREAM,
                     ReadOffset.from("0"),
@@ -37,7 +49,6 @@ public class DashboardStreamConsumer {
             );
             log.info("Created consumer group '{}'", StreamConstants.REALTIME_GROUP);
         } catch (Exception e) {
-            // group already exists — this is expected on restart
             log.debug("Consumer group already exists: {}", e.getMessage());
         }
     }
