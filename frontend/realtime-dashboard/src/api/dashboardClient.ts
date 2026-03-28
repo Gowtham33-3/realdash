@@ -48,7 +48,7 @@ dashboardClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
 
-    console.log("API Error:", error.response?.status, error.response?.data)
+    console.error("API Error:", error.response?.status, error.response?.data)
 
     if (
       error.response?.status === 401 &&

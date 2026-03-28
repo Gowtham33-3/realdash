@@ -73,8 +73,12 @@ function DashboardCanvasPage() {
       const widget = await addWidget(id, type, config)
       dispatch(widgetAdded(widget))
       setShowAddModal(false)
-    } catch {
-      dispatch(setError("Failed to add widget"))
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string; error?: string } } })
+        ?.response?.data?.message
+        || (err as { response?: { data?: { error?: string } } })?.response?.data?.error
+        || "Failed to add widget"
+      dispatch(setError(msg))
     }
   }
 
