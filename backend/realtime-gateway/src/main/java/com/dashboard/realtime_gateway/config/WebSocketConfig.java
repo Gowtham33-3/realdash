@@ -24,7 +24,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
         log.info("Registering WebSocket endpoint /ws");
 
-        registry.addHandler(handler, "/ws")
+        registry.addHandler(handler, "/ws/dashboard/*")
                 .addInterceptors(authInterceptor)
                 .setAllowedOriginPatterns("*");
     }
