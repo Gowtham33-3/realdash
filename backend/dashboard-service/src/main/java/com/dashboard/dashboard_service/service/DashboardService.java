@@ -114,7 +114,7 @@ public class DashboardService {
     }
 
     private Dashboard getOwnedDashboard(UUID dashboardId, UUID userId) {
-        Dashboard dashboard = repository.findById(dashboardId).orElseThrow();
+        Dashboard dashboard = repository.findByIdWithWidgets(dashboardId).orElseThrow();
 
         log.debug("Dashboard owner: {}, Requesting user: {}", dashboard.getOwnerId(), userId);
 

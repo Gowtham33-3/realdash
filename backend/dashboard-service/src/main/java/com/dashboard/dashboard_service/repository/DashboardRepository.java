@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface DashboardRepository
@@ -20,4 +21,12 @@ public interface DashboardRepository
         WHERE d.ownerId = :ownerId
     """)
     List<Dashboard> findAllByOwnerIdWithWidgets(UUID ownerId);
+
+    @Query("""
+        SELECT d
+        FROM Dashboard d
+        LEFT JOIN FETCH d.widgets
+        WHERE d.id = :id
+    """)
+    Optional<Dashboard> findByIdWithWidgets(UUID id);
 }
