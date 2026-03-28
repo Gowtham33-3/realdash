@@ -1,0 +1,85 @@
+version: "3.9"
+
+services:
+
+  redis:
+    image: redis:7.2
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+    volumes:
+      - redis-data:/data
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-auth:5432/authdb
+      SPRING_DATASOURCE_USERNAME: auth_user
+      SPRING_DATASOURCE_PASSWORD: auth_pass
+    depends_on:
+      - postgres-auth
+
+  dashboard-service:
+    build: ./dashboard-service
+    container_name: dashboard-service
+    ports:
+      - "8082:8082"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-dashboard:5432/dashboarddb
+      SPRING_DATASOURCE_USERNAME: dashboard_user
+      SPRING_DATASOURCE_PASSWORD: dashboard_pass
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    depends_on:
+      - redis
+      - postgres-dashboard
+
+  realtime-gateway:
+    build: ./realtime-gateway
+    container_name: realtime-gateway
+    ports:
+      - "8083:8083"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    depends_on:
+      - redis
+
+  postgres-auth:
+    image: postgres:16
+    container_name: postgres-auth
+    environment:
+      POSTGRES_DB: authdb
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: auth_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-auth-data:/var/lib/postgresql/data
+
+  postgres-dashboard:
+    image: postgres:16
+    container_name: postgres-dashboard
+    environment:
+      POSTGRES_DB: dashboarddb
+      POSTGRES_USER: dashboard_user
+      POSTGRES_PASSWORD: dashboard_pass
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-dashboard-data:/var/lib/postgresql/data
+
+volumes:
+  redis-data:
+  postgres-auth-data:
+  postgres-dashboard-data:

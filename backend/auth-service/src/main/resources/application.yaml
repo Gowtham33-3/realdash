@@ -1,0 +1,28 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    #url: jdbc:postgresql://localhost:5433/authdb
+    url: jdbc:postgresql://localhost:5432/authdb
+    username: auth_user
+    password: auth_pass
+  jpa:
+    properties:
+      hibernate.jdbc.time_zone: Asia/Kolkata
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:u6r0uG5w2rZ6p9p6+Rz0xv2Yp4R1z0sVb0y4xH3Fq5E=}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
