@@ -1,6 +1,5 @@
 import { getToken } from "../api/tokenStorage"
 import type { WidgetEvent } from "../types/socket"
-import type { WidgetEvent } from "../types/socket"
 
 let socket: WebSocket | null = null
 

@@ -3,20 +3,13 @@ import CreateDashboard from "../components/CreateDashboard"
 import { useState } from "react"
 
 function DashboardPage() {
-
-  const [reload, setReload] = useState(false)
-
-  const triggerReload = () => {
-    setReload(!reload)
-  }
+  const [refreshKey, setRefreshKey] = useState("0")
 
   return (
-    <div>
-
-      <CreateDashboard onCreated={triggerReload} />
-
-      <DashboardList key={reload.toString()} />
-
+    <div className="dashboard-page">
+      <h2>My Dashboards</h2>
+      <CreateDashboard onCreated={() => setRefreshKey(Date.now().toString())} />
+      <DashboardList refreshKey={refreshKey} />
     </div>
   )
 }

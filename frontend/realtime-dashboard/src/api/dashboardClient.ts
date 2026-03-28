@@ -51,7 +51,7 @@ dashboardClient.interceptors.response.use(
     console.log("API Error:", error.response?.status, error.response?.data)
 
     if (
-      (error.response?.status === 401 || error.response?.status === 403) &&
+      error.response?.status === 401 &&
       !originalRequest._retry
     ) {
       if (isRefreshing) {
@@ -87,10 +87,6 @@ dashboardClient.interceptors.response.use(
     }
 
     // if not handleable, or retry already attempted
-    if (error.response?.status === 403) {
-      window.location.href = "/login"
-    }
-
     return Promise.reject(error)
   }
 )

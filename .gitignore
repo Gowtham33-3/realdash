@@ -17,6 +17,10 @@ out/
 # VS Code
 .vscode/
 
+# Node
+node_modules/
+dist/
+
 # OS
 .DS_Store
 Thumbs.db
